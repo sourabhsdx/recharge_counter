@@ -1,42 +1,27 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterrechargecount/screens/home.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutterrechargecount/services/auth.dart';
+
+
 
 class Login extends StatefulWidget {
+  Login({this.auth});
+  final AuthBase auth;
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _showProgress =false;
+   bool _showProgress =false;
 
   _signIn() async{
     setState(() {
       _showProgress = true;
     });
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    if(user!=null)
-    {
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(
-    builder: (context)=>HomePage()
-    ));
-    }
+    await widget.auth.signInWithGoogle();
     setState(() {
       _showProgress = false;
     });
-
   }
   @override
   Widget build(BuildContext context) {
@@ -47,7 +32,7 @@ class _LoginState extends State<Login> {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(onPressed: _signIn,
+              RaisedButton(onPressed:_showProgress?null:_signIn,
                 padding: EdgeInsets.all(20),
                 elevation: 10,
                 shape: RoundedRectangleBorder(

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "708498561580",
+    "firebase_url": "https://recharge-count.firebaseio.com",
+    "project_id": "recharge-count",
+    "storage_bucket": "recharge-count.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708498561580:android:cbdc8b3a23ade612c2cf89",
+        "android_client_info": {
+          "package_name": "com.seeknlearn.flutterrechargecount"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708498561580-1p67f1lrethfk8rg04gsqkdbta5pguuj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seeknlearn.flutterrechargecount",
+            "certificate_hash": "327801f7f0d64697589ede9a719a9ce2f05c7adf"
+          }
+        },
+        {
+          "client_id": "708498561580-8o7r9f87ve5ra460ibcf8jpl7us650m8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBURIjn2mDV9xyqaVJ_m4Z5AurEV6RnIEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708498561580-8o7r9f87ve5ra460ibcf8jpl7us650m8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

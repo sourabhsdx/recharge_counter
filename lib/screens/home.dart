@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterrechargecount/screens/floating_screen.dart';
+import 'package:flutterrechargecount/services/auth.dart';
 
 class HomePage extends StatefulWidget {
+  HomePage({this.auth});
+  final AuthBase auth;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -35,6 +38,12 @@ class _HomePageState extends State<HomePage> {
         leading: Icon(Icons.account_balance_wallet),
         backgroundColor: Colors.black,
         title: Text("Recharge Count"),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: ()=>widget.auth.signOut(),
+            child: Text("Logout",style: TextStyle(color: Colors.white),),
+          )
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
