@@ -4,8 +4,9 @@ import 'package:flutterrechargecount/screens/floating_screen.dart';
 import 'package:flutterrechargecount/services/auth.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({this.auth});
+  HomePage({this.auth,this.user});
   final AuthBase auth;
+  final User user;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -14,8 +15,9 @@ class _HomePageState extends State<HomePage> {
   Firestore _firestore = Firestore.instance;
   double _total = 0.00;
 
+
   void getTotal() async{
-   final transactions = await _firestore.collection('transactions').getDocuments();
+   final transactions = await _firestore.collection('users/${widget.user.uid}/transactions').getDocuments();
    double totalBal = 0.0;
    for(var transaction in transactions.documents){
      totalBal = totalBal +double.parse(transaction.data['amount'].toString());
@@ -24,6 +26,7 @@ class _HomePageState extends State<HomePage> {
      _total = totalBal;
    });
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -75,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('transactions').snapshots(),
+              stream: _firestore.collection('users/${widget.user.uid}/transactions').snapshots(),
               builder: (context,snapshot){
                 if(snapshot.hasData){
                   final transactions = snapshot.data.documents;
@@ -111,8 +114,11 @@ class _HomePageState extends State<HomePage> {
                   getTotal();
 
                   return Expanded(
-                    child: ListView(
-                      children: _listElm,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ListView(
+                        children: _listElm,
+                      ),
                     ),
                   );
 
@@ -128,7 +134,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton:
-        FloatingForm()
+        FloatingForm(auth: widget.auth,)
     );
   }
 }

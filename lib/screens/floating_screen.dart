@@ -1,24 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterrechargecount/services/auth.dart';
 
 class FloatingForm extends StatefulWidget {
+  FloatingForm({this.auth});
+  final AuthBase auth;
   @override
   _FloatingFormState createState() => _FloatingFormState();
 }
 
 class _FloatingFormState extends State<FloatingForm> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser _user;
   final Firestore _firestore = Firestore.instance;
+  User _user;
   String _operator;
   String _number;
   double _amount;
   String _name="";
 
   getUser() async{
-    _user = await _auth.currentUser();
-    _name = _user.displayName;
+     _user = await widget.auth.currentUser();
+    _name = _user.name;
   }
   @override
   void initState() {
@@ -77,7 +78,7 @@ class _FloatingFormState extends State<FloatingForm> {
                       SizedBox(height: 10,),
                       RaisedButton(
                         onPressed: () async{
-                          _firestore.collection('/transactions').add({
+                          _firestore.collection('users/${_user.uid}/transactions').add({
                             'name':_name,
                             'number':_number,
                             'operator':_operator,
@@ -95,7 +96,6 @@ class _FloatingFormState extends State<FloatingForm> {
                 ),
               );
             });
-
       },
     );
   }

@@ -18,7 +18,13 @@ class _LoginState extends State<Login> {
     setState(() {
       _showProgress = true;
     });
-    await widget.auth.signInWithGoogle();
+    try {
+      await widget.auth.signInWithGoogle();
+    }
+    catch(e){
+      _showProgress = false;
+      print(e.toString());
+    }
     setState(() {
       _showProgress = false;
     });
