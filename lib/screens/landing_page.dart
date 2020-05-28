@@ -3,39 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutterrechargecount/screens/home.dart';
 import 'package:flutterrechargecount/screens/login.dart';
 import 'package:flutterrechargecount/services/auth.dart';
+import 'package:flutterrechargecount/services/database.dart';
+import 'package:provider/provider.dart';
 
 
 
-class LandingPage extends StatefulWidget {
-  LandingPage({this.auth});
-  final AuthBase auth;
+class LandingPage extends StatelessWidget {
 
-  @override
-  _LandingPageState createState() => _LandingPageState();
-}
-
-class _LandingPageState extends State<LandingPage> {
-  User _user;
-  getUser() async{
-    _user = await widget.auth.currentUser();
-  }
-  @override
-  void initState() {
-    getUser();
-    // TODO: implement initState
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
+    final AuthBase auth = Provider.of<Auth>(context);
     return StreamBuilder<User>(
-        stream: widget.auth.onAuthStateChanged,
+        stream: auth.onAuthStateChanged,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             User user = snapshot.data;
             if (user == null) {
-              return Login(auth: widget.auth,);
+              return Login();
             }
-            return HomePage(auth: widget.auth,user: _user,);
+            return Provider(
+              create: (_)=>FirestoreDatabase(uid: user.uid),
+                child: HomePage(user: user,));
           } else {
             return Scaffold(
               body: Center(

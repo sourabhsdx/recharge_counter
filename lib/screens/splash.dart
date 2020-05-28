@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterrechargecount/screens/landing_page.dart';
-import 'package:flutterrechargecount/services/auth.dart';
+
 
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 2), (){
       Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(
-          builder: (context)=> LandingPage(auth: Auth(),)
+          builder: (context)=> LandingPage()
       ));
     });
   }

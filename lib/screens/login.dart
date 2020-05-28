@@ -1,12 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutterrechargecount/services/auth.dart';
-
+import 'package:provider/provider.dart';
 
 
 class Login extends StatefulWidget {
-  Login({this.auth});
-  final AuthBase auth;
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -14,12 +13,13 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
    bool _showProgress =false;
 
-  _signIn() async{
+  _signIn(BuildContext context) async{
+    final AuthBase _authBase = Provider.of<Auth>(context,listen: false);
     setState(() {
       _showProgress = true;
     });
     try {
-      await widget.auth.signInWithGoogle();
+      await _authBase.signInWithGoogle();
     }
     catch(e){
       _showProgress = false;
@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(onPressed:_showProgress?null:_signIn,
+              RaisedButton(onPressed:_showProgress?null:()=>_signIn(context),
                 padding: EdgeInsets.all(20),
                 elevation: 10,
                 shape: RoundedRectangleBorder(

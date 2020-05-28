@@ -1,12 +1,12 @@
-class Transaction {
+class TransactionClass {
   String name;
   String operator;
   String time;
   bool paid;
   String number;
-  int amount;
+  double amount;
 
-  Transaction(
+  TransactionClass(
       {this.name,
         this.operator,
         this.time,
@@ -14,7 +14,7 @@ class Transaction {
         this.number,
         this.amount});
 
-  Transaction.fromJson(Map<String, dynamic> json) {
+  TransactionClass.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     operator = json['operator'];
     time = json['time'];

@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterrechargecount/screens/floating_screen.dart';
 import 'package:flutterrechargecount/services/auth.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({this.auth,this.user});
-  final AuthBase auth;
+  HomePage({this.user});
   final User user;
   @override
   _HomePageState createState() => _HomePageState();
@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Firestore _firestore = Firestore.instance;
   double _total = 0.00;
-
 
   void getTotal() async{
    final transactions = await _firestore.collection('users/${widget.user.uid}/transactions').getDocuments();
@@ -35,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
+    final AuthBase auth = Provider.of<Auth>(context);
     return Scaffold(
         backgroundColor: Colors.black,
       appBar: AppBar(
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
         title: Text("Recharge Count"),
         actions: <Widget>[
           FlatButton(
-            onPressed: ()=>widget.auth.signOut(),
+            onPressed: ()=>auth.signOut(),
             child: Text("Logout",style: TextStyle(color: Colors.white),),
           )
         ],
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(height: 30,),
                     Text("Total:",style: Theme.of(context).textTheme.headline5,),
                     SizedBox(height: 10,),
-                    Text("Rs. $_total",style: Theme.of(context).textTheme.headline2,)
+                    Text("Rs. $_total",style: TextStyle(color: Colors.white,fontSize: MediaQuery.of(context).size.width*0.1),)
                   ],
                 ),
               ),
@@ -90,14 +90,15 @@ class _HomePageState extends State<HomePage> {
                       final String operator = transaction.data['operator'];
                       final String number = transaction.data['number'];
                       final String amount = transaction.data['amount'].toString();
+                      bool value = transaction.data['paid']??false;
                       final transWidget =  Material(
                         color: _listElm.length%2==0?Colors.black12:Colors.white,
                         shadowColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                         ),
-                        child: ListTile(
-                          leading: Icon(Icons.attach_money),
+                        child: CheckboxListTile(
+                          secondary: Text("$amount"),
                           title: Column(
                             children: <Widget>[
                               Text("+91$number"),
@@ -105,7 +106,12 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                           subtitle: Text("$name"),
-                          trailing: Text("$amount"),
+                         value: value,
+                          onChanged: (value){
+                            setState(() {
+                              value = value;
+                            });
+                          },
                         ),
                       );
 
@@ -134,7 +140,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton:
-        FloatingForm(auth: widget.auth,)
+        FloatingForm(user: widget.user,)
     );
   }
 }

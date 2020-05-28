@@ -1,35 +1,40 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutterrechargecount/models/transaction.dart';
 import 'package:flutterrechargecount/services/auth.dart';
+import 'package:flutterrechargecount/services/database.dart';
+import 'package:provider/provider.dart';
 
 class FloatingForm extends StatefulWidget {
-  FloatingForm({this.auth});
-  final AuthBase auth;
+  FloatingForm({this.user});
+  final User user;
   @override
   _FloatingFormState createState() => _FloatingFormState();
 }
 
 class _FloatingFormState extends State<FloatingForm> {
-  final Firestore _firestore = Firestore.instance;
-  User _user;
   String _operator;
   String _number;
   double _amount;
-  String _name="";
 
-  getUser() async{
-     _user = await widget.auth.currentUser();
-    _name = _user.name;
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getUser();
 
+  void _addTxn(Database firestore) async
+  {
+    await firestore.addTransaction(TransactionClass.fromJson({
+      'name':widget.user.name,
+      'number':_number,
+      'operator':_operator,
+      'amount':_amount,
+      'paid':false,
+      'time':DateTime.now().toIso8601String()
+    }));
+    Navigator.of(context).pop();
   }
+
+
   @override
   Widget build(BuildContext context) {
+    final Database _firestore = Provider.of<FirestoreDatabase>(context,listen: false);
     return FloatingActionButton(
       child: Icon(Icons.add),
       onPressed: (){
@@ -70,22 +75,14 @@ class _FloatingFormState extends State<FloatingForm> {
                         keyboardType: TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
                             labelText: "Amount"
-                        ), 
+                        ),
                           onChanged: (value){
                             _amount=double.parse(value);
                           }
                       ),
                       SizedBox(height: 10,),
                       RaisedButton(
-                        onPressed: () async{
-                          _firestore.collection('users/${_user.uid}/transactions').add({
-                            'name':_name,
-                            'number':_number,
-                            'operator':_operator,
-                            'amount':_amount
-                          });
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: ()=>_addTxn(_firestore),
                         textColor: Colors.white,
                         color: Colors.blue,
                         child: Text("Add Transaction"
