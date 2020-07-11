@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterrechargecount/models/transaction.dart';
 import 'package:flutterrechargecount/screens/floating_screen.dart';
 import 'package:flutterrechargecount/services/auth.dart';
+import 'package:flutterrechargecount/services/database.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final AuthBase auth = Provider.of<Auth>(context);
+    final Database firestore = Provider.of<FirestoreDatabase>(context);
     return Scaffold(
         backgroundColor: Colors.black,
       appBar: AppBar(
@@ -77,20 +80,19 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('users/${widget.user.uid}/transactions').snapshots(),
+            StreamBuilder<List<TransactionClass>>(
+              stream: firestore.transactionStream(),
               builder: (context,snapshot){
                 if(snapshot.hasData){
-                  final transactions = snapshot.data.documents;
+                  final transactions = snapshot.data;
                   List<Widget> _listElm = [];
-                  double totalAmount =0.00;
-                  for(var transaction in transactions)
+                  for(TransactionClass transaction in transactions)
                     {
-                      final String name = transaction.data['name'];
-                      final String operator = transaction.data['operator'];
-                      final String number = transaction.data['number'];
-                      final String amount = transaction.data['amount'].toString();
-                      bool value = transaction.data['paid']??false;
+                      final String name = transaction.name;
+                      final String operator = transaction.operator;
+                      final String number = transaction.number;
+                      final String amount = transaction.amount.toString();
+                      bool value = transaction.paid??false;
                       final transWidget =  Material(
                         color: _listElm.length%2==0?Colors.black12:Colors.white,
                         shadowColor: Colors.white,
@@ -128,6 +130,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
 
+                }
+                else if(snapshot.hasError){
+                  print("has error");
                 }
                 return Expanded(
                   child: Center(
