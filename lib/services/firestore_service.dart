@@ -8,17 +8,42 @@ class FirestoreService {
 
   Future<void> addData({String path, Map<String, dynamic> data}) async {
     final reference = Firestore.instance.collection(path);
-    print('$path: $data');
     await reference.add(data);
   }
 
   Stream<List<T>> collectionStream<T>({
     @required String path,
-    @required T builder(Map<String, dynamic> data),
+    @required T builder(Map<String, dynamic> data, String docId),
+    @required String field,
+    @required bool descending
   }) {
     final reference = Firestore.instance.collection(path);
-    final snapshots = reference.snapshots();
+    final snapshots = reference.orderBy(field,descending: descending).snapshots();
     return snapshots.map((snapshot) =>
-        snapshot.documents.map((snapshot) => builder(snapshot.data)).toList());
+        snapshot.documents.map((snaps) => builder(snaps.data,snaps.documentID)).toList());
   }
+
+
+
+  Stream<List<T>> collectionNonPaid<T>({
+    @required String path,
+    @required T builder(Map<String, dynamic> data, String docId),
+  }) {
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.where("paid",isEqualTo: false).snapshots();
+    return snapshots.map((snapshot) =>
+        snapshot.documents.map((snaps) => builder(snaps.data,snaps.documentID)).toList());
+  }
+
+  Future<void> update({String docPath,Map<String,dynamic> data}) async {
+    final reference = Firestore.instance.document(docPath);
+    await reference.updateData(data);
+  }
+
+  Future<void> delete({String docPath}) async {
+    final reference = Firestore.instance.document(docPath);
+    await reference.delete();
+  }
+
+
 }

@@ -1,3 +1,4 @@
 class APIPath{
-  static String transactions(String uid )=> 'users/$uid/transactions';
+  static String transactions()=> 'transaction';
+  static String messages()=>'messages';
 }

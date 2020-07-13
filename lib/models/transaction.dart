@@ -1,10 +1,14 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TransactionClass {
   String name;
   String operator;
-  String time;
+  Timestamp time;
   bool paid;
   String number;
   double amount;
+  String docId;
 
   TransactionClass(
       {this.name,
@@ -14,14 +18,24 @@ class TransactionClass {
         this.number,
         this.amount});
 
-  TransactionClass.fromJson(Map<String, dynamic> json) {
+  TransactionClass.fromJson(Map<String, dynamic> json,String doc) {
     name = json['name'];
     operator = json['operator'];
     time = json['time'];
     paid = json['paid'];
     number = json['number'];
-    amount = json['amount'];
+    amount = double.parse(json['amount'].toString());
+    docId = doc;
   }
+
+//  TransactionClass.fromDart(Map<String, dynamic> json) {
+//    name = json['name'];
+//    operator = json['operator'];
+//    time = json['time'];
+//    paid = json['paid'];
+//    number = json['number'];
+//    amount = double.parse(json['amount'].toString());
+//  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
